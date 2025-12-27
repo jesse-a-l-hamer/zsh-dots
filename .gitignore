@@ -1,6 +1,5 @@
 ### .gitignore
 
-.antidote/
 .zcompcache/
 .zsh_sessions/
 .zcompdump*
