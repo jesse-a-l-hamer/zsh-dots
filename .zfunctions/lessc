@@ -1,0 +1,2 @@
+#!/bin/zsh
+/usr/share/vim/vim91/macros/less.sh "$@"
