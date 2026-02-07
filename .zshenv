@@ -14,7 +14,6 @@ export ZDOTDIR=${ZDOTDIR:-$XDG_CONFIG_HOME/zsh}
 # Ensure path arrays do not contain duplicates.
 typeset -gU path fpath
 
-# Set the list of directories that zsh searches for commands.
 path=(
   $HOME/{,s}bin(N)
   $HOME/.local/{,s}bin(N)
@@ -26,7 +25,6 @@ path=(
   /usr/local/{,s}bin(N)
   $path
 )
-
 
 for _rc in ${ZDOTDIR:-$HOME}/.zshenv.d/*.zsh; do
   # Ignore tilde files.
