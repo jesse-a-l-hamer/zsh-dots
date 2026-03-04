@@ -1,0 +1,2 @@
+export MANGOHUD=1
+
