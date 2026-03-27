@@ -20,6 +20,7 @@ path=(
   $HOME/.local/share/flatpak/exports/bin(N)
   $HOME/.local/share/gem/ruby/3.4.0/bin(N)
   $HOME/.cargo/bin(N)
+  $HOME/.scripts(N)
   ${GOPATH:-$HOME/.go}/bin(N)
   /opt/{homebrew,local}/{,s}bin(N)
   /usr/local/{,s}bin(N)
