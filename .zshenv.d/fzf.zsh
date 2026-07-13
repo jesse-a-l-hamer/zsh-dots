@@ -21,6 +21,7 @@ FZF_BINDS='
 --bind=ctrl-e:cancel'
 
 FZF_OTHER='
+--ansi
 --border="rounded"
 --border-label=""
 --preview-window="border-rounded"
@@ -41,7 +42,19 @@ export FZF_DEFAULT_OPTS=$FZF_CATPPUCCIN_MACCHIATO_THEME$FZF_BINDS$FZF_OTHER
 
 # yt-x fzf overrides
 YT_X_FZF_OVERRIDES='
---color=header:#ee99a0'
+--style=full
+--scheme=history
+--height=100%
+--bind=ctrl-/:toggle-preview,ctrl-space:toggle-wrap+toggle-preview-wrap
+--no-margin
++m
+-i
+--exact
+--tabstop=1
+--preview-window=border-rounded,left,35%,wrap
+--wrap
+--layout=reverse
+--color=header:#f6c0c0'
 
 export YT_X_FZF_OPTS=$FZF_DEFAULT_OPTS$YT_X_FZF_OVERRIDES
 
