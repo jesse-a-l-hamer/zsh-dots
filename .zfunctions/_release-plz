@@ -1,0 +1,331 @@
+#compdef release-plz
+
+autoload -U is-at-least
+
+_release-plz() {
+    typeset -A opt_args
+    typeset -a _arguments_options
+    local ret=1
+
+    if is-at-least 5.2; then
+        _arguments_options=(-s -S -C)
+    else
+        _arguments_options=(-s -C)
+    fi
+
+    local context curcontext="$curcontext" state line
+    _arguments "${_arguments_options[@]}" : \
+'*-v[Print source location and additional information in logs]' \
+'*--verbose[Print source location and additional information in logs]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'-V[Print version]' \
+'--version[Print version]' \
+":: :_release-plz_commands" \
+"*::: :->release-plz" \
+&& ret=0
+    case $state in
+    (release-plz)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:release-plz-command-$line[1]:"
+        case $line[1] in
+            (update)
+_arguments "${_arguments_options[@]}" : \
+'--manifest-path=[Path to the Cargo.toml of the project you want to update. If not provided, release-plz will use the Cargo.toml of the current directory. Both Cargo workspaces and single packages are supported]:MANIFEST_PATH:_files' \
+'--registry-manifest-path=[Path to the Cargo.toml contained in the released version of the project you want to update. If not provided, the packages of your project will be compared with the ones published in the cargo registry. Normally, this parameter is used only if the published version of your project is already available locally. For example, it could be the path to the project with a \`git checkout\` on its latest tag. The git history of this project should be behind the one of the project you want to update]:REGISTRY_MANIFEST_PATH:_files' \
+'-p+[Package to update. Use it when you want to update a single package rather than all the packages contained in the workspace]:PACKAGE:_default' \
+'--package=[Package to update. Use it when you want to update a single package rather than all the packages contained in the workspace]:PACKAGE:_default' \
+'(--no-changelog)--release-date=[Date of the release. Format\: %Y-%m-%d. It defaults to current Utc date]:RELEASE_DATE:_default' \
+'(--registry-manifest-path)--registry=[Registry where the packages are stored. The registry name needs to be present in the Cargo config. If unspecified, the \`publish\` field of the package manifest is used. If the \`publish\` field is empty, crates.io is used]:REGISTRY:_default' \
+'(--no-changelog)--changelog-config=[Path to the git-cliff configuration file. If not provided, \`dirs\:\:config_dir()/git-cliff/cliff.toml\` is used if present]:PATH:_files' \
+'--repo-url=[GitHub/Gitea repository url where your project is hosted. It is used to generate the changelog release link. It defaults to the url of the default remote]:REPO_URL:_default' \
+'--config=[Path to the release-plz config file]:PATH:_files' \
+'--git-token=[Git token used to create the pull request]:GIT_TOKEN:_default' \
+'--github-token=[Git token used to create the pull request]:GIT_TOKEN:_default' \
+'--forge=[Kind of git host where your project is hosted. If not specified, release-plz infers it from the repository host. Specify it explicitly for GitHub Enterprise Server, whose host can'\''t be auto-detected]:FORGE:(github gitea gitlab)' \
+'--backend=[Kind of git host where your project is hosted. If not specified, release-plz infers it from the repository host. Specify it explicitly for GitHub Enterprise Server, whose host can'\''t be auto-detected]:FORGE:(github gitea gitlab)' \
+'--max-analyze-commits=[Maximum number of commits to analyze when the package hasn'\''t been published yet. Default\: 1000]:MAX_ANALYZE_COMMITS:_default' \
+'(--release-date)--no-changelog[Don'\''t create/update changelog]' \
+'-u[Update all the dependencies in the Cargo.lock file by running \`cargo update\`. If this flag is not specified, only update the workspace packages by running \`cargo update --workspace\`]' \
+'--update-deps[Update all the dependencies in the Cargo.lock file by running \`cargo update\`. If this flag is not specified, only update the workspace packages by running \`cargo update --workspace\`]' \
+'--allow-dirty[Allow dirty working directories to be updated. The uncommitted changes will be part of the update]' \
+'*-v[Print source location and additional information in logs]' \
+'*--verbose[Print source location and additional information in logs]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(release-pr)
+_arguments "${_arguments_options[@]}" : \
+'--manifest-path=[Path to the Cargo.toml of the project you want to update. If not provided, release-plz will use the Cargo.toml of the current directory. Both Cargo workspaces and single packages are supported]:MANIFEST_PATH:_files' \
+'--registry-manifest-path=[Path to the Cargo.toml contained in the released version of the project you want to update. If not provided, the packages of your project will be compared with the ones published in the cargo registry. Normally, this parameter is used only if the published version of your project is already available locally. For example, it could be the path to the project with a \`git checkout\` on its latest tag. The git history of this project should be behind the one of the project you want to update]:REGISTRY_MANIFEST_PATH:_files' \
+'-p+[Package to update. Use it when you want to update a single package rather than all the packages contained in the workspace]:PACKAGE:_default' \
+'--package=[Package to update. Use it when you want to update a single package rather than all the packages contained in the workspace]:PACKAGE:_default' \
+'(--no-changelog)--release-date=[Date of the release. Format\: %Y-%m-%d. It defaults to current Utc date]:RELEASE_DATE:_default' \
+'(--registry-manifest-path)--registry=[Registry where the packages are stored. The registry name needs to be present in the Cargo config. If unspecified, the \`publish\` field of the package manifest is used. If the \`publish\` field is empty, crates.io is used]:REGISTRY:_default' \
+'(--no-changelog)--changelog-config=[Path to the git-cliff configuration file. If not provided, \`dirs\:\:config_dir()/git-cliff/cliff.toml\` is used if present]:PATH:_files' \
+'--repo-url=[GitHub/Gitea repository url where your project is hosted. It is used to generate the changelog release link. It defaults to the url of the default remote]:REPO_URL:_default' \
+'--config=[Path to the release-plz config file]:PATH:_files' \
+'--git-token=[Git token used to create the pull request]:GIT_TOKEN:_default' \
+'--github-token=[Git token used to create the pull request]:GIT_TOKEN:_default' \
+'--forge=[Kind of git host where your project is hosted. If not specified, release-plz infers it from the repository host. Specify it explicitly for GitHub Enterprise Server, whose host can'\''t be auto-detected]:FORGE:(github gitea gitlab)' \
+'--backend=[Kind of git host where your project is hosted. If not specified, release-plz infers it from the repository host. Specify it explicitly for GitHub Enterprise Server, whose host can'\''t be auto-detected]:FORGE:(github gitea gitlab)' \
+'--max-analyze-commits=[Maximum number of commits to analyze when the package hasn'\''t been published yet. Default\: 1000]:MAX_ANALYZE_COMMITS:_default' \
+'-o+[Output format. If specified, prints the branch, URL and number of the release PR, if any]:OUTPUT:(json)' \
+'--output=[Output format. If specified, prints the branch, URL and number of the release PR, if any]:OUTPUT:(json)' \
+'(--release-date)--no-changelog[Don'\''t create/update changelog]' \
+'-u[Update all the dependencies in the Cargo.lock file by running \`cargo update\`. If this flag is not specified, only update the workspace packages by running \`cargo update --workspace\`]' \
+'--update-deps[Update all the dependencies in the Cargo.lock file by running \`cargo update\`. If this flag is not specified, only update the workspace packages by running \`cargo update --workspace\`]' \
+'--allow-dirty[Allow dirty working directories to be updated. The uncommitted changes will be part of the update]' \
+'*-v[Print source location and additional information in logs]' \
+'*--verbose[Print source location and additional information in logs]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(release)
+_arguments "${_arguments_options[@]}" : \
+'--manifest-path=[Path to the Cargo.toml of the project you want to release. If not provided, release-plz will use the Cargo.toml of the current directory. Both Cargo workspaces and single packages are supported]:MANIFEST_PATH:_files' \
+'--registry=[Registry where you want to publish the packages. The registry name needs to be present in the Cargo config. If unspecified, the \`publish\` field of the package manifest is used. If the \`publish\` field is empty, crates.io is used]:REGISTRY:_default' \
+'--token=[Token used to publish to the cargo registry. Override the \`CARGO_REGISTRY_TOKEN\` environment variable, or the \`CARGO_REGISTRIES_<NAME>_TOKEN\` environment variable, used for registry specified in the \`registry\` input variable]:TOKEN:_default' \
+'--repo-url=[GitHub/Gitea/GitLab repository url where your project is hosted. It is used to create the git release. It defaults to the url of the default remote]:REPO_URL:_default' \
+'--git-token=[Git token used to publish the GitHub/Gitea/GitLab release]:GIT_TOKEN:_default' \
+'--forge=[Kind of git forge]:FORGE:(github gitea gitlab)' \
+'--backend=[Kind of git forge]:FORGE:(github gitea gitlab)' \
+'--config=[Path to the release-plz config file]:PATH:_files' \
+'-o+[Output format. If specified, prints the version and the tag of the released packages]:OUTPUT:(json)' \
+'--output=[Output format. If specified, prints the version and the tag of the released packages]:OUTPUT:(json)' \
+'--dry-run[Perform all checks without uploading]' \
+'--no-verify[Don'\''t verify the contents by building them. When you pass this flag, \`release-plz\` adds the \`--no-verify\` flag to \`cargo publish\`]' \
+'--allow-dirty[Allow dirty working directories to be packaged. When you pass this flag, \`release-plz\` adds the \`--allow-dirty\` flag to \`cargo publish\`]' \
+'*-v[Print source location and additional information in logs]' \
+'*--verbose[Print source location and additional information in logs]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(generate-completions)
+_arguments "${_arguments_options[@]}" : \
+'*-v[Print source location and additional information in logs]' \
+'*--verbose[Print source location and additional information in logs]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'::shell -- Shell option:(bash elvish fish powershell zsh)' \
+&& ret=0
+;;
+(check-updates)
+_arguments "${_arguments_options[@]}" : \
+'*-v[Print source location and additional information in logs]' \
+'*--verbose[Print source location and additional information in logs]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(generate-schema)
+_arguments "${_arguments_options[@]}" : \
+'*-v[Print source location and additional information in logs]' \
+'*--verbose[Print source location and additional information in logs]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(init)
+_arguments "${_arguments_options[@]}" : \
+'--manifest-path=[Path to the Cargo.toml of the project you want to update. If not provided, release-plz will use the Cargo.toml of the current directory. Both Cargo workspaces and single packages are supported]:MANIFEST_PATH:_files' \
+'--no-toml-check[If set, don'\''t check if the toml files contain \`description\` and \`license\` fields, which are mandatory for crates.io]' \
+'*-v[Print source location and additional information in logs]' \
+'*--verbose[Print source location and additional information in logs]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+&& ret=0
+;;
+(set-version)
+_arguments "${_arguments_options[@]}" : \
+'--manifest-path=[Path to the Cargo.toml of the project you want to update. If not provided, release-plz will use the Cargo.toml of the current directory. Both Cargo workspaces and single packages are supported]:MANIFEST_PATH:_files' \
+'--config=[Path to the release-plz config file]:PATH:_files' \
+'*-v[Print source location and additional information in logs]' \
+'*--verbose[Print source location and additional information in logs]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+'*::versions -- New version of the package you want to update. Format\: `<package_name>@<version-req>`:_default' \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" : \
+":: :_release-plz__subcmd__help_commands" \
+"*::: :->help" \
+&& ret=0
+
+    case $state in
+    (help)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:release-plz-help-command-$line[1]:"
+        case $line[1] in
+            (update)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(release-pr)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(release)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(generate-completions)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(check-updates)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(generate-schema)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(init)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(set-version)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+        esac
+    ;;
+esac
+}
+
+(( $+functions[_release-plz_commands] )) ||
+_release-plz_commands() {
+    local commands; commands=(
+'update:Update packages version and changelogs based on commit messages' \
+'release-pr:Create a Pull Request representing the next release' \
+'release:Release the package to the cargo registry and git forge' \
+'generate-completions:Generate command autocompletions for various shells' \
+'check-updates:Check if a newer version of release-plz is available' \
+'generate-schema:Write the JSON schema of the release-plz.toml configuration to .schema/latest.json' \
+'init:Initialize release-plz for the current GitHub repository' \
+'set-version:Edit the version of a package in Cargo.toml and changelog' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'release-plz commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__check-updates_commands] )) ||
+_release-plz__subcmd__check-updates_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz check-updates commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__generate-completions_commands] )) ||
+_release-plz__subcmd__generate-completions_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz generate-completions commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__generate-schema_commands] )) ||
+_release-plz__subcmd__generate-schema_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz generate-schema commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__help_commands] )) ||
+_release-plz__subcmd__help_commands() {
+    local commands; commands=(
+'update:Update packages version and changelogs based on commit messages' \
+'release-pr:Create a Pull Request representing the next release' \
+'release:Release the package to the cargo registry and git forge' \
+'generate-completions:Generate command autocompletions for various shells' \
+'check-updates:Check if a newer version of release-plz is available' \
+'generate-schema:Write the JSON schema of the release-plz.toml configuration to .schema/latest.json' \
+'init:Initialize release-plz for the current GitHub repository' \
+'set-version:Edit the version of a package in Cargo.toml and changelog' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'release-plz help commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__help__subcmd__check-updates_commands] )) ||
+_release-plz__subcmd__help__subcmd__check-updates_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz help check-updates commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__help__subcmd__generate-completions_commands] )) ||
+_release-plz__subcmd__help__subcmd__generate-completions_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz help generate-completions commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__help__subcmd__generate-schema_commands] )) ||
+_release-plz__subcmd__help__subcmd__generate-schema_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz help generate-schema commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__help__subcmd__help_commands] )) ||
+_release-plz__subcmd__help__subcmd__help_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz help help commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__help__subcmd__init_commands] )) ||
+_release-plz__subcmd__help__subcmd__init_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz help init commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__help__subcmd__release_commands] )) ||
+_release-plz__subcmd__help__subcmd__release_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz help release commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__help__subcmd__release-pr_commands] )) ||
+_release-plz__subcmd__help__subcmd__release-pr_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz help release-pr commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__help__subcmd__set-version_commands] )) ||
+_release-plz__subcmd__help__subcmd__set-version_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz help set-version commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__help__subcmd__update_commands] )) ||
+_release-plz__subcmd__help__subcmd__update_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz help update commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__init_commands] )) ||
+_release-plz__subcmd__init_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz init commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__release_commands] )) ||
+_release-plz__subcmd__release_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz release commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__release-pr_commands] )) ||
+_release-plz__subcmd__release-pr_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz release-pr commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__set-version_commands] )) ||
+_release-plz__subcmd__set-version_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz set-version commands' commands "$@"
+}
+(( $+functions[_release-plz__subcmd__update_commands] )) ||
+_release-plz__subcmd__update_commands() {
+    local commands; commands=()
+    _describe -t commands 'release-plz update commands' commands "$@"
+}
+
+if [ "$funcstack[1]" = "_release-plz" ]; then
+    _release-plz "$@"
+else
+    compdef _release-plz release-plz
+fi
